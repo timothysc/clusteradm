@@ -28,16 +28,17 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config [config name]",
-	Short: "Generate cluster config",
-	Long:  `Generate cluster config`,
+	Short: "Generate provider specific cluster config",
+	Long:  `Generate provider specific cluster config`,
 	Args:  cobra.ExactArgs(1),
 	Run:   runConfig,
 }
 
 func init() {
 	rootCmd.AddCommand(configCmd)
-	configCmd.Flags().StringSlice("providers", nil, "providers to initialize")
-	configCmd.MarkFlagRequired("providers")
+	configCmd.Flags().StringSlice("provider", nil, "provider to initialize")
+	configCmd.MarkFlagRequired("provider")
+	// TODO - add the supported providers via client call.
 }
 
 func runConfig(cmd *cobra.Command, args []string) {

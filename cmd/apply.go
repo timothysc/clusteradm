@@ -28,8 +28,8 @@ import (
 // applyCmd represents the apply command
 var applyCmd = &cobra.Command{
 	Use:   "apply",
-	Short: "Apply new configuration to a cluster",
-	Long:  `Apply new configuration to a cluster`,
+	Short: "Apply a new cluster configuration",
+	Long:  `Apply a new cluster configuration`,
 	Run:   runApply,
 }
 

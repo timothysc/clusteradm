@@ -28,10 +28,20 @@ import (
 // upgradeCmd represents the upgrade command
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
-	Short: "perform a rolling upgrade on a cluster",
-	Long:  `perform a rolling upgrade on a cluster`,
+	Short: "perform an upgrade of the clusteradm operator on the Management cluster",
+	Long:  `perform an upgrade of the clusteradm operator on the Management cluster`,
 	Run:   runUpgrade,
 }
+
+// TODO - should we support the entire CRUD workflow and enable upgrades of target cluster.
+// QOTD - Fuse mount but for clusters.
+// Root -- Your root kubeconfig would need to know all the mgmt clusters.
+//  MC1
+//    Target1
+// 	MC2
+//   Target2
+//
+// Should we repl this thing?
 
 func init() {
 	rootCmd.AddCommand(upgradeCmd)

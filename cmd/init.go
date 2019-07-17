@@ -28,8 +28,8 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "initialize a Kubernetes cluster",
-	Long:  `initialize a Kubernetes cluster`,
+	Short: "initialize the Management Cluster",
+	Long:  `Runs clusteradm operator on the Management Cluster`,
 	Run:   runInit,
 }
 
@@ -41,6 +41,10 @@ func init() {
 }
 
 func runInit(cmd *cobra.Command, args []string) {
+
+	// TODO preflight checks to determine if KUBECONFIG exists for local=false.
+	// if not, print long help thing.
+	// 1. If it's already running exit with note on the version running.
 	fmt.Println("performing init...")
 	cc, _ := client.NewClusteradmClient()
 	providers, _ := cmd.Flags().GetStringSlice("providers")

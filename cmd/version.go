@@ -19,28 +19,22 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-
-	"k8s.io/klog"
-
-	"github.com/timothysc/clusteradm/pkg/client"
+	//"k8s.io/klog"
 )
 
-// resetCmd represents the reset command
-var resetCmd = &cobra.Command{
-	Use:   "reset",
-	Short: "removes clusteradm operator and associated components",
-	Long:  `removes clusteradm operator and associated components`,
-	Run:   runReset,
+// versionCmd represents the version command
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print clusteradm version",
+	Run:   runVersion,
 }
 
 func init() {
-	rootCmd.AddCommand(resetCmd)
-	//TODO - determine if we should remove the local KIND cluster.
+	rootCmd.AddCommand(versionCmd)
 }
 
-func runReset(cmd *cobra.Command, args []string) {
-	fmt.Println("performing config...")
-	klog.V(2).Infoln("calling interface ClusteradmClient.Reset()")
-	cc, _ := client.NewClusteradmClient()
-	cc.Reset()
+func runVersion(cmd *cobra.Command, args []string) {
+	fmt.Println("Needs more cowbell on versions of CAP* artifacts built in")
+	// TODO: client probably needs a version
+	// should output a list of the supported CAP* providers.
 }
