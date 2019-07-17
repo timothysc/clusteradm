@@ -20,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"k8s.io/klog"
+
 	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
 )
 
@@ -36,7 +38,8 @@ func init() {
 }
 
 func runUpgrade(cmd *cobra.Command, args []string) {
-	fmt.Println("calling interface ClusteradmClient.Upgrade()")
+	fmt.Println("performing upgrade...")
+	klog.V(2).Infoln("calling interface ClusteradmClient.Upgrade()")
 	cc, _ := client.NewClusteradmClient()
 	cc.Upgrade()
 }

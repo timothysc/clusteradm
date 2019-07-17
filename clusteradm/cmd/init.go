@@ -20,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"k8s.io/klog"
+
 	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
 )
 
@@ -33,20 +35,17 @@ var initCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// initCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// initCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	initCmd.Flags().StringSlice("providers", nil, "providers to initialize")
+	initCmd.MarkFlagRequired("providers")
+	initCmd.Flags().Bool("local", false, "bootstrap a local cluster with kind")
 }
 
 func runInit(cmd *cobra.Command, args []string) {
-	fmt.Println("calling interface ClusteradmClient.Init()")
+	fmt.Println("performing init...")
 	cc, _ := client.NewClusteradmClient()
+	providers, _ := cmd.Flags().GetStringSlice("providers")
+	for _, p := range providers {
+		klog.V(2).Infof("calling interface ClusteradmClient.Init() with provider: %s\n", p)
+	}
 	cc.Init()
 }
