@@ -20,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"k8s.io/klog"
+
 	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
 )
 
@@ -35,13 +37,15 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringSlice("providers", nil, "providers to initialize")
 	initCmd.MarkFlagRequired("providers")
+	initCmd.Flags().Bool("local", false, "bootstrap a local cluster with kind")
 }
 
 func runInit(cmd *cobra.Command, args []string) {
+	fmt.Println("performing init...")
 	cc, _ := client.NewClusteradmClient()
 	providers, _ := cmd.Flags().GetStringSlice("providers")
 	for _, p := range providers {
-		fmt.Printf("calling interface ClusteradmClient.Init() with provider: %s\n", p)
+		klog.V(2).Infof("calling interface ClusteradmClient.Init() with provider: %s\n", p)
 	}
 	cc.Init()
 }

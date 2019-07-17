@@ -20,6 +20,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"k8s.io/klog"
+
 	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
 )
 
@@ -36,8 +38,8 @@ func init() {
 }
 
 func runApply(cmd *cobra.Command, args []string) {
-	fmt.Println("apply called")
-	fmt.Println("calling interface ClusteradmClient.Apply()")
+	fmt.Println("performing apply...")
+	klog.V(2).Infoln("calling interface ClusteradmClient.Apply()")
 	cc, _ := client.NewClusteradmClient()
 	cc.Apply()
 }
