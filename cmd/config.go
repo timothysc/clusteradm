@@ -22,24 +22,31 @@ import (
 
 	"k8s.io/klog"
 
-	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
+	"github.com/timothysc/clusteradm/pkg/client"
 )
 
-// resetCmd represents the reset command
-var resetCmd = &cobra.Command{
-	Use:   "reset",
-	Short: "delete a cluster",
-	Long:  `delete a cluster`,
-	Run:   runReset,
+// configCmd represents the config command
+var configCmd = &cobra.Command{
+	Use:   "config [config name]",
+	Short: "Generate cluster config",
+	Long:  `Generate cluster config`,
+	Args:  cobra.ExactArgs(1),
+	Run:   runConfig,
 }
 
 func init() {
-	rootCmd.AddCommand(resetCmd)
+	rootCmd.AddCommand(configCmd)
+	configCmd.Flags().StringSlice("providers", nil, "providers to initialize")
+	configCmd.MarkFlagRequired("providers")
 }
 
-func runReset(cmd *cobra.Command, args []string) {
+func runConfig(cmd *cobra.Command, args []string) {
 	fmt.Println("performing config...")
-	klog.V(2).Infoln("calling interface ClusteradmClient.Reset()")
 	cc, _ := client.NewClusteradmClient()
-	cc.Reset()
+	providers, _ := cmd.Flags().GetStringSlice("providers")
+	for _, p := range providers {
+		klog.V(2).Infof("calling interface ClusteradmClient.GenerateConfig() with provider: %s\n", p)
+	}
+	cc.GenerateConfig()
+	fmt.Printf("writing to: %s\n", args[0])
 }

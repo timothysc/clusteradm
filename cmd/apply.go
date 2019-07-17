@@ -13,30 +13,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package main
+package cmd
 
 import (
-	"flag"
+	"fmt"
 
-	"github.com/spf13/pflag"
+	"github.com/spf13/cobra"
 
 	"k8s.io/klog"
 
-	"github.com/timothysc/capi-tools/clusteradm/cmd"
+	"github.com/timothysc/clusteradm/pkg/client"
 )
 
-func main() {
-	klog.InitFlags(nil)
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-	pflag.Set("logtostderr", "true")
-	pflag.CommandLine.MarkHidden("version")
-	pflag.CommandLine.MarkHidden("log-flush-frequency")
-	pflag.CommandLine.MarkHidden("alsologtostderr")
-	pflag.CommandLine.MarkHidden("log-backtrace-at")
-	pflag.CommandLine.MarkHidden("log-dir")
-	pflag.CommandLine.MarkHidden("logtostderr")
-	pflag.CommandLine.MarkHidden("stderrthreshold")
-	pflag.CommandLine.MarkHidden("vmodule")
+// applyCmd represents the apply command
+var applyCmd = &cobra.Command{
+	Use:   "apply",
+	Short: "Apply new configuration to a cluster",
+	Long:  `Apply new configuration to a cluster`,
+	Run:   runApply,
+}
 
-	cmd.Execute()
+func init() {
+	rootCmd.AddCommand(applyCmd)
+}
+
+func runApply(cmd *cobra.Command, args []string) {
+	fmt.Println("performing apply...")
+	klog.V(2).Infoln("calling interface ClusteradmClient.Apply()")
+	cc, _ := client.NewClusteradmClient()
+	cc.Apply()
 }

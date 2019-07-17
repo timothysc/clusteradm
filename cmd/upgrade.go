@@ -22,24 +22,24 @@ import (
 
 	"k8s.io/klog"
 
-	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
+	"github.com/timothysc/clusteradm/pkg/client"
 )
 
-// applyCmd represents the apply command
-var applyCmd = &cobra.Command{
-	Use:   "apply",
-	Short: "Apply new configuration to a cluster",
-	Long:  `Apply new configuration to a cluster`,
-	Run:   runApply,
+// upgradeCmd represents the upgrade command
+var upgradeCmd = &cobra.Command{
+	Use:   "upgrade",
+	Short: "perform a rolling upgrade on a cluster",
+	Long:  `perform a rolling upgrade on a cluster`,
+	Run:   runUpgrade,
 }
 
 func init() {
-	rootCmd.AddCommand(applyCmd)
+	rootCmd.AddCommand(upgradeCmd)
 }
 
-func runApply(cmd *cobra.Command, args []string) {
-	fmt.Println("performing apply...")
-	klog.V(2).Infoln("calling interface ClusteradmClient.Apply()")
+func runUpgrade(cmd *cobra.Command, args []string) {
+	fmt.Println("performing upgrade...")
+	klog.V(2).Infoln("calling interface ClusteradmClient.Upgrade()")
 	cc, _ := client.NewClusteradmClient()
-	cc.Apply()
+	cc.Upgrade()
 }

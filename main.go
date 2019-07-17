@@ -13,33 +13,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package main
 
 import (
-	"fmt"
+	"flag"
 
-	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 
 	"k8s.io/klog"
 
-	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
+	"github.com/timothysc/clusteradm/cmd"
 )
 
-// upgradeCmd represents the upgrade command
-var upgradeCmd = &cobra.Command{
-	Use:   "upgrade",
-	Short: "perform a rolling upgrade on a cluster",
-	Long:  `perform a rolling upgrade on a cluster`,
-	Run:   runUpgrade,
-}
+func main() {
+	klog.InitFlags(nil)
+	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
+	pflag.Set("logtostderr", "true")
+	pflag.CommandLine.MarkHidden("version")
+	pflag.CommandLine.MarkHidden("log-flush-frequency")
+	pflag.CommandLine.MarkHidden("alsologtostderr")
+	pflag.CommandLine.MarkHidden("log-backtrace-at")
+	pflag.CommandLine.MarkHidden("log-dir")
+	pflag.CommandLine.MarkHidden("logtostderr")
+	pflag.CommandLine.MarkHidden("stderrthreshold")
+	pflag.CommandLine.MarkHidden("vmodule")
 
-func init() {
-	rootCmd.AddCommand(upgradeCmd)
-}
-
-func runUpgrade(cmd *cobra.Command, args []string) {
-	fmt.Println("performing upgrade...")
-	klog.V(2).Infoln("calling interface ClusteradmClient.Upgrade()")
-	cc, _ := client.NewClusteradmClient()
-	cc.Upgrade()
+	cmd.Execute()
 }

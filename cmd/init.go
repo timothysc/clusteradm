@@ -22,31 +22,30 @@ import (
 
 	"k8s.io/klog"
 
-	"github.com/timothysc/capi-tools/pkg/clusteradm/client"
+	"github.com/timothysc/clusteradm/pkg/client"
 )
 
-// configCmd represents the config command
-var configCmd = &cobra.Command{
-	Use:   "config [config name]",
-	Short: "Generate cluster config",
-	Long:  `Generate cluster config`,
-	Args:  cobra.ExactArgs(1),
-	Run:   runConfig,
+// initCmd represents the init command
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "initialize a Kubernetes cluster",
+	Long:  `initialize a Kubernetes cluster`,
+	Run:   runInit,
 }
 
 func init() {
-	rootCmd.AddCommand(configCmd)
-	configCmd.Flags().StringSlice("providers", nil, "providers to initialize")
-	configCmd.MarkFlagRequired("providers")
+	rootCmd.AddCommand(initCmd)
+	initCmd.Flags().StringSlice("providers", nil, "providers to initialize")
+	initCmd.MarkFlagRequired("providers")
+	initCmd.Flags().Bool("local", false, "bootstrap a local cluster with kind")
 }
 
-func runConfig(cmd *cobra.Command, args []string) {
-	fmt.Println("performing config...")
+func runInit(cmd *cobra.Command, args []string) {
+	fmt.Println("performing init...")
 	cc, _ := client.NewClusteradmClient()
 	providers, _ := cmd.Flags().GetStringSlice("providers")
 	for _, p := range providers {
-		klog.V(2).Infof("calling interface ClusteradmClient.GenerateConfig() with provider: %s\n", p)
+		klog.V(2).Infof("calling interface ClusteradmClient.Init() with provider: %s\n", p)
 	}
-	cc.GenerateConfig()
-	fmt.Printf("writing to: %s\n", args[0])
+	cc.Init()
 }
