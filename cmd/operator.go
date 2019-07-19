@@ -17,11 +17,18 @@ package cmd
 
 import (
 	"fmt"
-	"runtime"
-
-	"k8s.io/klog"
+	"os"
+	gort "runtime"
 
 	"github.com/spf13/cobra"
+
+	clusteradmv1 "github.com/timothysc/clusteradm/api/v1"
+	"github.com/timothysc/clusteradm/controllers"
+	"k8s.io/apimachinery/pkg/runtime"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	// +kubebuilder:scaffold:imports
 )
 
 // operatorCmd represents the operator command
@@ -29,30 +36,62 @@ var operatorCmd = &cobra.Command{
 	Use:   "operator",
 	Short: "operator starts a clusteradm operator",
 	Long:  `operator starts a clusteradm operator`,
-	Run: runOperator,
+	Run:   runOperator,
 }
+
+var (
+	scheme   = runtime.NewScheme()
+	setupLog = ctrl.Log.WithName("setup")
+	version  = "v0.0.0" // TODO: set up a version file
+)
 
 func init() {
 	rootCmd.AddCommand(operatorCmd)
 
-	// Here you will define your flags and configuration settings.
+	operatorCmd.Flags().Bool("enable-leader-election", false,
+		"Enable leader election for controller manager. Enabling this will ensure there is only one active controller manager.")
+	operatorCmd.Flags().String("metrics-addr", ":8080", "The address the metric endpoint binds to.")
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// operatorCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// operatorCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	clusteradmv1.AddToScheme(scheme)
+	// +kubebuilder:scaffold:scheme
 }
-
 
 func runOperator(cmd *cobra.Command, args []string) {
-	fmt.Println("operator called")
-	printVersion()
-}
+	banner := fmt.Sprintf("Clusteradm operator %s (Go Version: %s running on %s/%s)", version, gort.Version(), gort.GOOS, gort.GOARCH)
 
-func printVersion() {
-	klog.V(0).Infof(fmt.Sprintf("Go Version: %s", runtime.Version()))
-	klog.V(0).Infof(fmt.Sprintf("Go OS/Arch: %s/%s", runtime.GOOS, runtime.GOARCH))
+	// TODO: error checking
+	metricsAddr, _ := cmd.Flags().GetString("metrics-addr")
+	enableLeaderElection, _ := cmd.Flags().GetBool("enable-leader-election")
+
+	ctrl.SetLogger(zap.Logger(true))
+
+	// set up logging for operator
+	logging := ctrl.Log.WithName("controllers").WithName("Provider")
+
+	logging.Info(banner)
+	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+		Scheme:             scheme,
+		MetricsBindAddress: metricsAddr,
+		LeaderElection:     enableLeaderElection,
+	})
+	if err != nil {
+		setupLog.Error(err, "unable to start manager")
+		os.Exit(1)
+	}
+
+	err = (&controllers.ProviderReconciler{
+		Client: mgr.GetClient(),
+		Log:    logging,
+	}).SetupWithManager(mgr)
+	if err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Provider")
+		os.Exit(1)
+	}
+	// +kubebuilder:scaffold:builder
+
+	setupLog.Info("starting manager")
+	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		setupLog.Error(err, "problem running manager")
+		os.Exit(1)
+	}
 }
