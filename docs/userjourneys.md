@@ -1,49 +1,42 @@
 # Clusteradm user journeys 
 
 Clusteradm primary goal is to provide a simplified consistent UX, so therefore outlining user journeys is essential.  In this document we will walk through some of the common user experiences. 
-
-## Central themes 
-
-1.  
-2. 
+ 
+## Preconditions 
+Some initial seed cluster which can be local needed.  If you do not have one we recommend using [KIND](https://github.com/kubernetes-sigs/kind)
 
 ## Getting started 
 
-### (REPL/Fuse Mode)
+`go get https://github.com/timothysc/clusteradm` 
 
-clusteradm 
-... Fuse mounts an FS and starts a repl (this is weird)
-/> help
-init version ls
-/> init --providers=aws,vsphere 
-... if no KUBECONFIG assume --local=true
-... deploy clusteradm operator 
-... clusteradm operator deploys aws and vsphere providers 
-/> ls 
-aws vsphere 
-/> cd aws 
-/aws/> ls 
-. 
-/aws/> help 
-config version apply ls 
-/aws/> config test
-... default editor or have a conf? 
-/aws/> save 
-... applies the YAML
-/aws/> ls 
-test . 
-/aws/> config test
+TODO: ACL - mgmt 
 
-TODO: Directory 
-cat spec
-cat status
+### Existing Managment Cluster
 
-Questions: 
-1. Namespacing 
-2. Using standard fs options and scripting `find . | grep foo`
-3. 
+`clusteradm init --providers=aws,vsphere` 
 
-### Subcommands
-clusteradm init --providers=aws,vsphere 
-TODO: finish subcommand standard workflow for getting started.
+### Bootstrap a new Management Cluster 
 
+`clusteradm init --boostrap=aws --providers=aws,vsphere`
+
+### Common workflow 
+
+`clusteradm config --provider=aws -o test.yaml (default --falvor=dev)`
+
+... edit test.yaml ... 
+
+`clusteradm apply -f test.yaml`
+
+... Should do some initial linting and type validation ... 
+
+`clusteradm status` 
+
+## Upgrade 
+
+`clusteradm upgrade` 
+
+## Remove 
+
+`clusteradm reset` 
+
+... removes cluster api based objects but doesn't touch the clusters ... 

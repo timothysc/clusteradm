@@ -37,7 +37,7 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringSlice("providers", nil, "providers to initialize")
 	initCmd.MarkFlagRequired("providers")
-	initCmd.Flags().Bool("local", false, "bootstrap a local cluster with kind")
+	// TODO - determine bootstrap/pivot scenario
 }
 
 func runInit(cmd *cobra.Command, args []string) {
