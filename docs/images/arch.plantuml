@@ -1,0 +1,52 @@
+@startuml "arch"
+
+package "clusteradm" {
+  actor User
+  User -> [CLI]
+  note bottom of [CLI]
+  //Examples://
+  clusteradm init --providers=aws,vsphere
+  clusteradm init ~--boostrap=aws ~--providers=aws,vsphere
+  clusteradm config ~--provider=aws -o test.yaml (default ~--flavor=dev)
+  clusteradm apply -f test.yaml
+  clusteradm status
+  end note
+}
+
+[CLI] -> [Client]
+
+package "MGMT" {
+  [Client] -> [Cluster API]
+  node "Cluster API" {
+    [Cluster API Core]
+    note bottom of [Cluster API Core]
+    Custom Resource Definitions
+    Controllers
+    end note
+  }
+  node "Infrastructure Providers" {
+    [AWS Provider]
+    [GCP Provider]
+    [Azure Provider]
+    [vSphere Provider]
+  }
+  node "Bootstrap Providers" {
+    [Kubeadm Provider]
+  }
+}
+
+cloud {
+  [AWS]
+  [GCP]
+  [Azure]
+  [vSphere]
+  [others...]
+}
+
+[AWS Provider] -> [AWS]
+[GCP Provider] -> [GCP]
+[Azure Provider] -> [Azure]
+[vSphere Provider] -> [vSphere]
+
+hide footbox
+@enduml
