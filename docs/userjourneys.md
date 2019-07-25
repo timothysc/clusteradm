@@ -31,9 +31,23 @@ TODO: ACL - mgmt
 
 `clusteradm status` 
 
+### Pivot workflow
+
+`clusteradm config --provider=aws --pivot -o pivot-test.yaml (default --flavor=dev)`
+
+... edit test.yaml ...
+
+`clusteradm apply -f pivot-test.yaml`
+
+... Same as common workflow, but hands off cluster management to the cluster itself ...
+
+The Operator should retain information about the target cluster even after pivoting.
+
 ## Upgrade 
 
 `clusteradm upgrade` 
+
+Upgrade should work on both pivoted and non-pivoted clusters.
 
 ## Remove 
 
