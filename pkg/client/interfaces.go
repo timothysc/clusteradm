@@ -18,7 +18,7 @@ func NewClusteradmClient() (*ClusteradmClient, error) {
 var _ Interface = &ClusteradmClient{}
 
 type Interface interface {
-	Init() error
+	Init(ClusteradmCfg) error
 	GenerateConfig() error
 	Upgrade() error
 	Reset() error
