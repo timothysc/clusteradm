@@ -20,8 +20,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"k8s.io/klog"
-
 	"github.com/timothysc/clusteradm/pkg/client"
 )
 
@@ -36,7 +34,9 @@ var initCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringSlice("providers", nil, "providers to initialize")
+	initCmd.Flags().String("bootstrap", "", "provider used to bootstrap")
 	initCmd.MarkFlagRequired("providers")
+	initCmd.Flags().Lookup("bootstrap").NoOptDefVal = "kind"
 	// TODO - determine bootstrap/pivot scenario
 }
 
@@ -46,10 +46,14 @@ func runInit(cmd *cobra.Command, args []string) {
 	// if not, print long help thing.
 	// 1. If it's already running exit with note on the version running.
 	fmt.Println("performing init...")
+
+	config := client.ClusteradmCfg{}
+
+	bootstrap, _ := cmd.Flags().GetString("bootstrap")
+	config.Bootstrap = bootstrap
+
 	cc, _ := client.NewClusteradmClient()
 	providers, _ := cmd.Flags().GetStringSlice("providers")
-	for _, p := range providers {
-		klog.V(2).Infof("calling interface ClusteradmClient.Init() with provider: %s\n", p)
-	}
-	cc.Init()
+	config.Providers = providers
+	cc.Init(config)
 }
