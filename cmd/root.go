@@ -18,10 +18,8 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
-	"gopkg.in/abiosoft/ishell.v2"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
@@ -34,7 +32,8 @@ var rootCmd = &cobra.Command{
 	Use:   "clusteradm",
 	Short: "deploy kubernetes clusters with ease",
 	Long:  `Clusteradm leverages Kubernetes' Cluster API to deploy and manage the lifecycle of Kubernetes clusters.`,
-	Run:   runRepl,
+	// TODO: running the naked command should send you to the REPL interface.
+	// Run:   runRepl,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -48,11 +47,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "clusteradm-config", "", "config file (default is $HOME/.clusteradm.yaml)")
 }
 
@@ -80,20 +74,4 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-}
-
-func runRepl(cmd *cobra.Command, args []string) {
-	shell := ishell.New()
-	shell.Println("Clusteradm REPL")
-	shell.SetPrompt("[clusteradm] ")
-
-	shell.AddCmd(&ishell.Cmd{
-		Name: "test",
-		Help: "test",
-		Func: func(c *ishell.Context) {
-			c.Println("yo", strings.Join(c.Args, " "))
-		},
-	})
-
-	shell.Run()
 }
