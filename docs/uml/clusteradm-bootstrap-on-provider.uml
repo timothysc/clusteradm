@@ -1,0 +1,22 @@
+title clusteradm bootstrap on provider (AWS)
+
+note left of User: all commands are prefixed\nwith "clusteradm"
+note left of User: has $KUBECONFIG set to\nLocal/Seed Cluster
+User->Local/Seed Cluster: init --providers=aws
+note right of Local/Seed Cluster: Operator\n+ CAPA deployed
+Local/Seed Cluster->User: Success
+User->Local/Seed Cluster: config --providers=aws,vsphere --flavor=simple
+note right of Local/Seed Cluster: fetches flavor=simple\nfrom CAPA
+Local/Seed Cluster->User: Drops into $EDITOR with\nprebuilt flavor yaml
+note left of User: fills in information (also secrets?)\nand gives it a name (yaml name="fubar")
+User->Local/Seed Cluster: saves file and triggers deployment
+Local/Seed Cluster->AWS Cluster: CAPA creates target cluster on provider
+note right of AWS Cluster: Target cluster deployed
+AWS Cluster->Local/Seed Cluster: Success
+Local/Seed Cluster->User: Success
+User->Local/Seed Cluster: init --providers=aws,vsphere,azure --from=fubar
+Local/Seed Cluster->User: Fetches KUBECONFIG\nfrom Local/Seed Cluster
+note left of User: Uses KUBECONFIG to\nconnect to AWS Cluster
+User->AWS Cluster: initialize management cluster (MC')
+note right of AWS Cluster: Operator\n+ CAPA\n+ CAPV\n+ CAPZ deployed
+AWS Cluster->User: Success
