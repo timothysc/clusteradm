@@ -12,17 +12,8 @@ Clusteradm provides the following capabilities:
 * Operator 
     * Provide lifecycle management of multiple provider specific controllers 
 
-## Why Clusteradm
-Because running and managing multiple providers is painful. 
-
-### Goals 
-    * Day 1 optimized user journey for Cluster API
-    * Provide a simplified consistent UX across providers
-    * Scope bounded to cluster api based mgmt.
-
-### Non-Goals
-    * Abstract away provider specific details
-    * Expanded scope to be a general cluster mgmt tool
+## Proposal 
+Details on the workflow can be found [here](https://docs.google.com/document/d/1ox_2dVzxJtWy_zv1SID0bGIes-hQyOVlAIC5ARcVdak/edit)
 
 ## Get Invovled
 Participation in the Kubernetes community is governed by the [Kubernetes Code of Conduct](code-of-conduct.md).
